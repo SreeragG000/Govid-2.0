@@ -8,43 +8,23 @@ export default function AskAI() {
   const [question, setQuestion] = useState('');
   const [answer, setAnswer] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
 
   const ask = async () => {
     setLoading(true);
     setAnswer('');
-    setError('');
-    
-    try {
-      const res = await fetch('/api/ask', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ question }),
-      });
-      
-      const data = await res.json();
-      
-      if (!res.ok) {
-        throw new Error(data.details || data.error || 'Failed to get response');
-      }
-
-      setAnswer(data.answer);
-    } catch (err: any) {
-      setError(err.message);
-      console.error('Error:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    ask();
+    const res = await fetch('/api/ask', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ question }),
+    });
+    const data = await res.json();
+    setAnswer(data.answer || data.error);
+    setLoading(false);
   };
 
   return (
     <div className="space-y-4">
-      <form onSubmit={handleSubmit} className="flex gap-2 relative">
+      <form onSubmit={ask} className="flex gap-2 relative">
         <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-600 to-red-600 rounded-full opacity-75 blur-sm"></div>
         <div className="relative flex w-full gap-2 bg-black/50 rounded-full p-1">
           <Input
@@ -65,12 +45,6 @@ export default function AskAI() {
         </div>
       </form>
 
-      {error && (
-        <div className="p-4 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400">
-          {error}
-        </div>
-      )}
-      
       {answer && (
         <div className="rounded-2xl p-4 bg-gradient-to-br from-blue-900/40 to-blue-900/20 border border-blue-500/30 text-white">
           {answer}

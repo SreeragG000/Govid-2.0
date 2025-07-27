@@ -55,13 +55,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`,
         "HTTP-Referer": "http://localhost:3000",
         "Content-Type": "application/json",
-        "OR-ORGANIZATION": "govid-chatbot" // Add organization identifier
+        "OR-ORGANIZATION": "govid-chatbot"
       },
       body: JSON.stringify({
         model: "openai/gpt-3.5-turbo",
         messages: [{ role: "user", content: question }],
-        max_tokens: 500, // Limit response length
-        temperature: 0.7 // Add some creativity
+        max_tokens: 500,
+        temperature: 0.7
       }),
     });
 
@@ -75,9 +75,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     res.status(200).json({ answer: data.choices?.[0]?.message?.content });
   } catch (error: any) {
     console.error("API route error:", error);
-    res.status(500).json({ 
+    res.status(500).json({
       error: "Failed to get answer from AI.",
-      details: error.message 
+      details: error.message
     });
   }
 }
